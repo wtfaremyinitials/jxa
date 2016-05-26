@@ -1,7 +1,7 @@
 {
   "name": "jxa",
   "version": "1.0.0",
-  "description": "Use JavaScript for Automation APIs directly",
+  "description": "Access OS X JavaScript for Automation APIs directly in node",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
