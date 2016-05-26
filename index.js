@@ -23,23 +23,9 @@ function dereference(path, args) {
 };
 
 var createReference = function(path) {
-    return Proxy.createFunction({
-        set: () =>  console.error('jxa set trap unsupported'),
-        get: (_, prop) => createReference(`${path}.${prop}`),
-
-        // TODO: Not implemented
-        has: r(true),
-        hasOwn: r(true),
-        enumerate: r(true),
-        keys: r(true),
-        getPrototypeOf: r(null),
-        setPrototypeOf: r(),
-        isExtensible: r(false),
-        preventExtensions: r(true),
-        getOwnPropertyDescriptor: r(undefined),
-        defineProperty: r(false)
-
-    }, (recv, _, args) => dereference(path, args));
+    return new Proxy((recv, _, args) => dereference(path, args), {
+        get: (_, prop) => createReference(`${path}.${prop}`)
+    });
 };
 
 var Application = function(handle) {
