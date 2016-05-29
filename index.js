@@ -8,10 +8,6 @@ if(!global.Proxy) {
 
 var exec = require('child_process').execSync;
 
-var r = function(val) {
-    return val;
-};
-
 function dereference(path, args) {
     try {
         var cmd = "osascript -l JavaScript -e 'JSON.stringify(" + path + "());'"
