@@ -17,14 +17,20 @@ function dereference(path, args) {
         var cmd = "osascript -l JavaScript -e 'JSON.stringify(" + path + "());'"
         var res = exec(cmd, { stdio: '' }).toString().trim();
         return JSON.parse(res);
-    } catch(e) {
-        return null;
-    }
+    } catch(e) {}
 };
+
+function createInspector(path)  {
+    return () => `[object JXAReference => ${dereference(path+'.toString')}]`;
+}
 
 var createReference = function(path) {
     return new Proxy((recv, _, args) => dereference(path, args), {
-        get: (_, prop) => createReference(`${path}.${prop}`)
+        get: (_, prop) => {
+            if(prop == 'inspect')
+                return createInspector(path);
+            return createReference(`${path}.${prop}`)
+        }
     });
 };
 
