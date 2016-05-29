@@ -7,7 +7,7 @@ jxa
 
 > Access OS X JavaScript for Automation APIs directly in node
 
-Similar to the [osa](https://www.npmjs.com/package/osa) module, but with a slightly easier API. If you're building a library, the osa module is better suited as it's calls are not synchronous.
+Similar to the [osa](https://www.npmjs.com/package/osa) module, but with a slightly easier API. If you're building a library, the osa module is better suited as its calls are not synchronous.
 
 ## Usage
 
