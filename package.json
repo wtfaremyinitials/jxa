@@ -1,6 +1,6 @@
 {
   "name": "jxa",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Access OS X JavaScript for Automation APIs directly in node",
   "main": "index.js",
   "scripts": {
