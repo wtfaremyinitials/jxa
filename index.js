@@ -20,7 +20,7 @@ function createInspector(path)  {
     return () => `[object JXAReference => ${dereference(path+'.toString')}]`;
 }
 
-var createReference = function(path) {
+function createReference(path) {
     return new Proxy((recv, _, args) => dereference(path, args), {
         get: (_, prop) => {
             if(prop == 'inspect')
