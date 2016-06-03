@@ -10,21 +10,36 @@ if(!global.Proxy) {
 // The AppleScript API is accessed through the `osascript` binary
 var exec = require('child_process').execSync;
 
+function parent(path) {
+    // TODO: May need to handle func calls and . accessor
+    return path.replace(/\["\w+"\]$/, '');
+}
+
 // Access the contents of a reference
 function dereference(path, args) {
     try { // Run the osascript binary in inline script mode, stringifying the reference
-        args = args ? `JSON.parse(\`${JSON.stringify(args)}\`)` : '';
-        var cmd = `JSON.stringify(${path}.apply(null, ${args}))`;
+        var cmd;
+
+        if(args.length == 0) {
+            cmd = `${path}()`;
+        } else {
+            args = JSON.stringify(args).replace(/"!(\.+)!"/, '$&');
+            cmd = `${path}.apply(${parent(path)}, eval(\`${args}\`))`;
+        }
+
+        cmd = `obj=${cmd};if(!(/\\[object \\w+Specifier\\]/.test(obj.toString())))obj=JSON.stringify(obj);obj`
         cmd = `osascript -l JavaScript -e '${cmd}'`;
-        console.log(cmd);
         var res = exec(cmd, { stdio: '' }).toString().trim();
+
+        if(res.startsWith('Application'))
+            return createReference(res);
         return JSON.parse(res);
     } catch(e) {}
 };
 
 // Used when the node REPL calls .inspect() to print a reference
 function createInspector(path)  {
-    return () => `[object JXAReference => ${dereference(path+'.toString')}]`;
+    return () => `[object JXAReference => ${dereference(path+'.toString',[])}]`;
 }
 
 // Create a pointer to an object in the AppleScript API
@@ -35,7 +50,9 @@ function createReference(path) {
         get: (_, prop) => {
             if(prop == 'inspect') // Handle node REPL's .inspect() calls
                 return createInspector(path);
-            return createReference(`${path}.${prop}`)
+            if(prop == 'toJSON')
+                return `!${path}!`; 
+            return createReference(`${path}["${prop}"]`)
         }
     });
 };

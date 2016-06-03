@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/wtfaremyinitials/jxa/issues"
   },
-  "homepage": "https://github.com/wtfaremyinitials/jxa#readme"
+  "homepage": "https://github.com/wtfaremyinitials/jxa#readme",
+  "dependencies": {
+    "osa": "^2.3.0"
+  }
 }
