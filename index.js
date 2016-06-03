@@ -13,7 +13,10 @@ var exec = require('child_process').execSync;
 // Access the contents of a reference
 function dereference(path, args) {
     try { // Run the osascript binary in inline script mode, stringifying the reference
-        var cmd = "osascript -l JavaScript -e 'JSON.stringify(" + path + "());'"
+        args = args ? `JSON.parse(\`${JSON.stringify(args)}\`)` : '';
+        var cmd = `JSON.stringify(${path}.apply(null, ${args}))`;
+        cmd = `osascript -l JavaScript -e '${cmd}'`;
+        console.log(cmd);
         var res = exec(cmd, { stdio: '' }).toString().trim();
         return JSON.parse(res);
     } catch(e) {}
@@ -27,7 +30,7 @@ function createInspector(path)  {
 // Create a pointer to an object in the AppleScript API
 function createReference(path) {
     // Object being proxied is the dereference function
-    return new Proxy((recv, _, args) => dereference(path, args), {
+    return new Proxy((...args) => dereference(path, args), {
         // Get trap catches props being accesses, returns a new reference
         get: (_, prop) => {
             if(prop == 'inspect') // Handle node REPL's .inspect() calls
