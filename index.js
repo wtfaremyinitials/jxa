@@ -19,20 +19,27 @@ function parent(path) {
 function dereference(path, args) {
     try { // Run the osascript binary in inline script mode, stringifying the reference
         var cmd;
-
+ 
+        // Arguments passed?
         if(args.length == 0) {
-            cmd = `${path}()`;
+            cmd = `${path}()`; // Don't bother with apply
         } else {
+            // Stringify the arguments then call the method with `apply`
             args = JSON.stringify(args).replace(/"!(\.+)!"/, '$&');
             cmd = `${path}.apply(${parent(path)}, eval(\`${args}\`))`;
         }
 
+        // Add in code to test if the resulting output should be stringified (object specifiers should not)
         cmd = `obj=${cmd};if(!(/\\[object \\w+Specifier\\]/.test(obj.toString())))obj=JSON.stringify(obj);obj`
+        // Wrap it as a command
         cmd = `osascript -l JavaScript -e '${cmd}'`;
+        // Run it
         var res = exec(cmd, { stdio: '' }).toString().trim();
 
+        // Create a reference if an object specifier was returned
         if(res.startsWith('Application'))
             return createReference(res);
+        // Otherwise parse the result
         return JSON.parse(res);
     } catch(e) {}
 };
