@@ -25,8 +25,8 @@ function dereference(path, args) {
             cmd = `${path}()`; // Don't bother with apply
         } else {
             // Stringify the arguments then call the method with `apply`
-            args = JSON.stringify(args).replace(/"!(\.+)!"/, '$&');
-            cmd = `${path}.apply(${parent(path)}, eval(\`${args}\`))`;
+            args = JSON.stringify(args);
+            cmd = `${path}.apply(${parent(path)}, JSON.parse(\`${args}\`))`;
         }
 
         // Add in code to test if the resulting output should be stringified (object specifiers should not)
@@ -57,8 +57,6 @@ function createReference(path) {
         get: (_, prop) => {
             if(prop == 'inspect') // Handle node REPL's .inspect() calls
                 return createInspector(path);
-            if(prop == 'toJSON')
-                return `!${path}!`; 
             return createReference(`${path}["${prop}"]`)
         }
     });
