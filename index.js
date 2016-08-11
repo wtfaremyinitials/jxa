@@ -13,7 +13,7 @@ var exec = require('child_process').execSync;
 // Access the contents of a reference
 function dereference(path, args) {
     try { // Run the osascript binary in inline script mode, stringifying the reference
-        var cmd = "osascript -l JavaScript -e 'JSON.stringify(" + path + "());'"
+        var cmd = `osascript -l JavaScript -e 'JSON.stringify(${path}());'`
         var res = exec(cmd, { stdio: '' }).toString().trim();
         return JSON.parse(res);
     } catch(e) {}
@@ -21,7 +21,7 @@ function dereference(path, args) {
 
 // Used when the node REPL calls .inspect() to print a reference
 function createInspector(path)  {
-    return () => `[object JXAReference => ${dereference(path+'.toString')}]`;
+    return () => `[object JXAReference => ${dereference(`${path}.toString`)}]`;
 }
 
 // Create a pointer to an object in the AppleScript API
@@ -39,7 +39,7 @@ function createReference(path) {
 
 // Entry point for module. Creates a reference to an Application()
 var Application = function(handle) {
-    return createReference('Application("' + handle + '")');
+    return createReference(`Application("${handle}")`);
 };
 
 module.exports.Application = Application;
