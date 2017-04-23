@@ -10,6 +10,11 @@ if(!global.Proxy) {
 // The AppleScript API is accessed through the `osascript` binary
 var exec = require('child_process').execSync;
 
+function isInspect(obj) {
+    var symb = require('util').inspect.custom
+    return obj == (symb ? symb : 'inspect')
+}
+
 function parent(path) {
     // TODO: May need to handle func calls and . accessor
     return path.replace(/\["\w+"\]$/, '');
@@ -55,7 +60,7 @@ function createReference(path) {
     return new Proxy((...args) => dereference(path, args), {
         // Get trap catches props being accesses, returns a new reference
         get: (_, prop) => {
-            if(prop == 'inspect') // Handle node REPL's .inspect() calls
+            if(isInspect(prop)) // Handle node REPL's .inspect() calls
                 return createInspector(path);
             return createReference(`${path}["${prop}"]`)
         }
