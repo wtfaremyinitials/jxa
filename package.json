@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/wtfaremyinitials/jxa#readme",
   "dependencies": {
-    "osa": "^2.3.0"
+    "blocking-await": "^1.0.0",
+    "osa2": "^0.2.1"
   }
 }
