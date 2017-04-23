@@ -5,7 +5,7 @@ jxa
 ![](https://img.shields.io/npm/v/jxa.svg)
 ![](https://img.shields.io/npm/l/jxa.svg)
 
-> Access OS X JavaScript for Automation APIs directly in node
+> Access macOS JavaScript for Automation APIs directly in node
 
 Similar to the [osa2](https://www.npmjs.com/package/osa2) module, but with synchronous calls and an API with a bit more 'magic'.
 If you're building a library, use `osa2`. This module is best suited for small scripts.
