@@ -1,5 +1,3 @@
-// TODO: Different behavior for array specifiers over object specifiers?
-
 var osa = require('osa2')
 var wait = require('blocking-await')
 
@@ -29,6 +27,7 @@ function dereference(path, args) {
         if (obj == null)
             return null
 
+        // TODO: Different behavior for array specifiers over object specifiers?
         if (/\\[object \\w+Specifier\\]/.test(obj.toString()))
             obj = obj.toString()
 
