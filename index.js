@@ -8,18 +8,20 @@ function isInspect(obj) {
     return obj == (symb ? symb : 'inspect')
 }
 
-function parent(path) {
-    // TODO: May need to handle func calls and . accessor
-    return path.replace(/\["\w+"\]$/, '')
-}
-
 // Access the contents of a reference
 function dereference(path, args) {
-    return wait((osa(function(path, that, args) {
-        var target = eval(path)
+    return wait((osa(function(path, args) {
+        var toStringMode = path[path.length - 1] == 'toString' // Stupid hack
 
-        if (args.length != 0 || path.endsWith('toString')) {
-            obj = target.apply(eval(that), args)
+        var lastTarget = null
+        var target = eval(path.shift())
+        while (path.length != 0) {
+            lastTarget = target
+            target = target[path.shift()]
+        }
+
+        if (args.length != 0 || toStringMode) {
+            obj = target.apply(lastTarget, args)
         } else {
             obj = target()
         }
@@ -31,12 +33,12 @@ function dereference(path, args) {
             obj = obj.toString()
 
         return obj
-    }))(path, parent(path), args))
+    }))(path, args))
 }
 
 // Used when the node REPL calls .inspect() to print a reference
 function createInspector(path)  {
-    return () => `[object JXAReference => ${dereference(path+'.toString',[])}]`
+    return () => `[object JXAReference => ${dereference(path.concat(['toString']),[])}]`
 }
 
 // Create a pointer to an object in the AppleScript API
@@ -47,14 +49,14 @@ function createReference(path) {
         get: (_, prop) => {
             if(isInspect(prop)) // Handle node REPL's .inspect() calls
                 return createInspector(path)
-            return createReference(`${path}["${prop}"]`)
+            return createReference(path.concat([prop]))
         }
     });
 };
 
 // Entry point for module. Creates a reference to an Application()
 function Application(handle) {
-    return createReference(`Application("${handle}")`)
+    return createReference([`Application("${handle}")`])
 }
 
 module.exports.Application = Application
