@@ -1,11 +1,4 @@
-// Check for Proxy support
-if(!global.Proxy) {
-    console.error('[jxa] Proxy support is required!');
-    console.error('Please either: ');
-    console.error(' - Relaunch node with the --harmony-proxies flag');
-    console.error(' - Upgrade to node >= 6.2.0');
-    process.exit(1);
-}
+// TODO: Different behavior for array specifiers over object specifiers?
 
 // The AppleScript API is accessed through the `osascript` binary
 var exec = require('child_process').execSync;
