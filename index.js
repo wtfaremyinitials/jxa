@@ -18,6 +18,7 @@ function dereference(path, args) {
             target = target[path.shift()]
         }
 
+        var obj
         if (args.length != 0 || toStringMode) {
             obj = target.apply(lastTarget, args)
         } else {
